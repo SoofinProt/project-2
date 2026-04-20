@@ -57,5 +57,10 @@
     "hax": {
       "cli": true
     },
-    "customElements": "custom-elements.json"
-  }
+    "customElements": "custom-elements.json",
+    "browserslist": [
+      "last 2 versions",
+      "not dead",
+      "not IE 11"
+    ]
+}
