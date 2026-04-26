@@ -1,4 +1,4 @@
-import { html, css } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { DDD } from "@haxtheweb/d-d-d/d-d-d.js";
 
 export class EggItem extends DDD {
@@ -6,31 +6,47 @@ export class EggItem extends DDD {
 
   static get properties() {
     return {
-      ...super.properties,
-      label: { type: String },
-      found: { type: Boolean, reflect: true },
+      title: { type: String },
+      description: { type: String },
+      icon: { type: String },
+      rarity: { type: String }, // "common", "rare", "legendary"
     };
   }
 
-  constructor() {
-    super();
-    this.label = '';
-    this.found = false;
-  }
-
   static get styles() {
-    return [
-      super.styles,
-      css`
-        :host { display: inline-block; }
-        .egg { font-size: 2rem; cursor: pointer; opacity: 1; transition: opacity 0.3s; }
-        :host([found]) .egg { opacity: 0.3; }
-      `
-    ];
+    return [super.styles, css`
+      :host {
+        display: block;
+        border: var(--ddd-border-sm);
+        border-radius: var(--ddd-radius-md);
+        padding: var(--ddd-spacing-4);
+        background: white;
+        transition: transform 0.2s ease;
+        text-align: center;
+      }
+      :host(:hover) {
+        transform: translateY(-5px);
+        box-shadow: var(--ddd-boxShadow-md);
+      }
+      .icon { font-size: 3rem; margin-bottom: var(--ddd-spacing-2); }
+      h3 { margin: 0; font-family: var(--ddd-font-primary); }
+      .rarity {
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: var(--ddd-theme-default-coalyGray);
+      }
+    `];
   }
 
   render() {
-    return html`<span class="egg" title="${this.label}">🥚</span>`;
+    return html`
+      <div class="icon">${this.icon || '🥚'}</div>
+      <div class="rarity">${this.rarity}</div>
+      <h3>${this.title}</h3>
+      <p>${this.description}</p>
+    `;
   }
 }
-customElements.define('egg-item', EggItem);
+customElements.define(EggItem.tag, EggItem);

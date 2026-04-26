@@ -1,4 +1,4 @@
-import { html, css } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { DDD } from "@haxtheweb/d-d-d/d-d-d.js";
 
 export class AboutPage extends DDD {
@@ -6,40 +6,69 @@ export class AboutPage extends DDD {
 
   static get properties() {
     return {
-      ...super.properties,
-      section: { type: String },
+      pageTitle: { type: String, attribute: "page-title" },
+      tagline: { type: String }
     };
   }
 
-  constructor() {
-    super();
-    this.section = 'mission';
-  }
-
   static get styles() {
-    return [
-      super.styles,
-      css`
-        :host { display: block; padding: var(--ddd-spacing-8); }
-        h2 { color: #6a0dad; border-bottom: 2px solid #e9d5ff; padding-bottom: 8px; }
-        p { color: #1a1a1a; font-size: 1rem; line-height: 1.7; }
-      `
-    ];
-  }
-
-  _renderSection() {
-    switch (this.section) {
-      case 'partners':
-        return html`<h2>Partners</h2><p>Partners content coming soon...</p>`;
-      case 'values':
-        return html`<h2>Core Values</h2><p>Core values content coming soon...</p>`;
-      default:
-        return html`<h2>Our Mission</h2><p>Mission content coming soon...</p>`;
-    }
+    return [super.styles, css`
+      :host {
+        display: block;
+        padding: var(--ddd-spacing-8);
+      }
+      .page-header {
+        text-align: center;
+        margin-bottom: var(--ddd-spacing-12);
+        border-bottom: var(--ddd-border-md);
+        padding-bottom: var(--ddd-spacing-6);
+      }
+      h1 { margin: 0; color: var(--ddd-theme-default-nittanyNavy); }
+      .tagline { font-size: 1.2rem; color: #555; font-weight: normal; }
+      
+      .story-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--ddd-spacing-10);
+      }
+      
+      ::slotted(*) {
+        font-family: var(--ddd-font-primary);
+        line-height: var(--ddd-lh-base);
+        margin-bottom: var(--ddd-spacing-4);
+      }
+      
+      .sidebar {
+        background-color: var(--ddd-theme-default-limestoneLight);
+        padding: var(--ddd-spacing-6);
+        border-radius: var(--ddd-radius-sm);
+        height: fit-content;
+      }
+      
+      ::slotted([slot="sidebar-items"]) {
+        margin-bottom: var(--ddd-spacing-2);
+        padding-bottom: var(--ddd-spacing-2);
+        border-bottom: 1px solid #ddd;
+      }
+    `];
   }
 
   render() {
-    return html`${this._renderSection()}`;
+    return html`
+      <div class="page-header">
+        <h1>${this.pageTitle || 'About Our Association'}</h1>
+        <p class="tagline">${this.tagline || 'Excellence in competitive retrieval.'}</p>
+      </div>
+      
+      <div class="story-grid">
+        <div class="main-content">
+          <slot></slot> </div>
+        <div class="sidebar">
+          <h3>Quick Facts</h3>
+          <slot name="sidebar-items"></slot>
+        </div>
+      </div>
+    `;
   }
 }
-customElements.define('about-page', AboutPage);
+customElements.define(AboutPage.tag, AboutPage);

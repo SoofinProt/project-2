@@ -29,7 +29,7 @@ export default {
     nodeResolve(),
     esbuild({
       minify: true,
-      target: ['chrome64', 'firefox67'],
+      target: 'es2018',    
     }),
     importMetaAssets(),
     babel({
