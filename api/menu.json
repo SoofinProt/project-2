@@ -1,0 +1,8 @@
+{
+  "items": [
+    { "title": "Home", "slug": "home" },
+    { "title": "Calendar", "slug": "calendar" },
+    { "title": "About", "slug": "about" },
+    { "title": "Join", "slug": "registration" }
+  ]
+}

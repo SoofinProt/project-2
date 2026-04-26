@@ -1,0 +1,6 @@
+[
+  { "date": "2026-04-05", "title": "Pee-wee Kickoff", "type": "peewee", "color": "#fff9c4" },
+  { "date": "2026-04-12", "title": "Teen Scavenger Hunt", "type": "teen", "color": "#e1f5fe" },
+  { "date": "2026-04-20", "title": "Adult Night Hunt", "type": "adult", "color": "#f3e5f5" },
+  { "date": "2026-04-20", "title": "Junior Finals", "type": "junior", "color": "#dcedc8" }
+]

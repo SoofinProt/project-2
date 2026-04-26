@@ -4,72 +4,64 @@ import { DDD } from "@haxtheweb/d-d-d/d-d-d.js";
 export class NavbarPage extends DDD {
   static get tag() { return 'navbar-page'; }
 
-  static get styles() {
-    return [
-      super.styles,
-      css`
-        :host {
-          display: block;
-          background-color: #d3d3d3; 
-          padding: var(--ddd-spacing-4) var(--ddd-spacing-10);
-        }
-        nav {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .logo { height: 80px; width: auto; }
-        .nav-links { display: flex; gap: 25px; align-items: center; }
-        
-        .nav-links a, .dropdown-btn {
-          text-decoration: none;
-          color: black;
-          font-family: var(--ddd-font-primary);
-          font-size: 1.2rem;
-          font-weight: bold;
-          cursor: pointer;
-        }
+  static get properties() {
+    return {
+      menuItems: { type: Array },
+    };
+  }
 
-        .dropdown { position: relative; display: inline-block; }
-        .dropdown-content {
-          display: none;
-          position: absolute;
-          background-color: #666;
-          min-width: 180px;
-          z-index: 100;
-          border-radius: 4px;
-          margin-top: 8px;
-        }
-        .dropdown:hover .dropdown-content { display: block; }
-        .dropdown-content a {
-          color: white;
-          padding: 12px 16px;
-          text-decoration: none;
-          display: block;
-          font-size: 0.9rem;
-          border-bottom: 1px solid #777;
-        }
-        .dropdown-content a:hover { background-color: #444; }
-      `
-    ];
+  constructor() {
+    super();
+    this.menuItems = [];
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.fetchMenu();
+  }
+
+  async fetchMenu() {
+    const res = await fetch('/api/menu.json');
+    const data = await res.json();
+    this.menuItems = data.items;
+  }
+
+  _changeRoute(e, slug) {
+    e.preventDefault();
+    window.history.pushState({}, '', `?page=${slug}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
+
+  static get styles() {
+    return [super.styles, css`
+      :host {
+        display: block;
+        background-color: var(--ddd-theme-default-limestoneGray);
+        padding: var(--ddd-spacing-4) var(--ddd-spacing-8);
+        border-bottom: var(--ddd-border-md);
+      }
+      nav { display: flex; justify-content: space-between; align-items: center; }
+      .logo { height: 60px; cursor: pointer; }
+      .nav-links { display: flex; gap: var(--ddd-spacing-6); }
+      a {
+        text-decoration: none;
+        color: var(--ddd-theme-default-nittanyNavy);
+        font-weight: var(--ddd-font-weight-bold);
+        font-family: var(--ddd-font-primary);
+        font-size: 1.1rem;
+      }
+      a:hover { color: var(--ddd-theme-default-beaverBlue); }
+    `];
   }
 
   render() {
     return html`
       <nav>
-        <img class="logo" src="https://easydrawingguides.com/wp-content/uploads/2021/12/how-to-draw-a-cartoon-egg-featured-image-1200.png" alt="Egg Hunt Logo">
+        <img class="logo" src="your-logo.png" @click="${(e) => this._changeRoute(e, 'home')}">
         <div class="nav-links">
-          <a href="#">About</a>
-          <div class="dropdown">
-            <span class="dropdown-btn">Join</span>
-            <div class="dropdown-content">
-              <a href="#">Pee-wee</a>
-              <a href="#">Ages 7-12</a>
-              <a href="#">Ages 13-17</a>
-              <a href="#">Adults 18+</a>
-            </div>
-          </div>
-          <a href="#">Contact</a>
+          ${this.menuItems.map(item => html`
+            <a href="?page=${item.slug}" @click="${(e) => this._changeRoute(e, item.slug)}">${item.title}</a>
+          `)}
         </div>
       </nav>
     `;
