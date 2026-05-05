@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/schedule", "destination": "/api/schedule.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -9,6 +9,7 @@ export class CalendarPage extends DDD {
       ...super.properties,
       month: { type: Number },
       year: { type: Number },
+      schedule: { type: Array },
     };
   }
 
@@ -16,6 +17,7 @@ export class CalendarPage extends DDD {
     super();
     this.month = 3;
     this.year = 2026;
+    this.schedule = [];
   }
 
   static get styles() {
@@ -32,7 +34,6 @@ export class CalendarPage extends DDD {
           overflow: hidden;
           box-shadow: 0 4px 16px rgba(106,13,173,0.12);
         }
-
         .header {
           display: flex;
           justify-content: space-between;
@@ -53,7 +54,6 @@ export class CalendarPage extends DDD {
           font-weight: bold;
         }
         .header button:hover { background: rgba(255,255,255,0.35); }
-
         .day-labels {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
@@ -69,7 +69,6 @@ export class CalendarPage extends DDD {
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
-
         .grid {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
@@ -81,9 +80,9 @@ export class CalendarPage extends DDD {
           min-height: 110px;
           padding: var(--ddd-spacing-2);
           position: relative;
+          overflow: hidden;
         }
         .day.outside { background: #faf5ff; }
-
         .date-circle {
           width: 28px;
           height: 28px;
@@ -98,8 +97,66 @@ export class CalendarPage extends DDD {
           position: absolute;
           top: 8px;
           right: 8px;
+          flex-shrink: 0;
         }
 
+        /* ── Event chips inside calendar cells ── */
+        .events-list {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          margin-top: 4px;
+          /* leave room for date circle */
+          padding-right: 36px;
+        }
+        .event-chip {
+          font-size: 0.68rem;
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 4px;
+          line-height: 1.4;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          cursor: default;
+          border-left: 3px solid transparent;
+        }
+        .event-chip.peewee {
+          background: #fef9c3;
+          color: #92400e;
+          border-left-color: #fbbf24;
+        }
+        .event-chip.youth {
+          background: #dcfce7;
+          color: #14532d;
+          border-left-color: #4ade80;
+        }
+        .event-chip.teen {
+          background: #dbeafe;
+          color: #1e3a8a;
+          border-left-color: #60a5fa;
+        }
+        .event-chip.adult {
+          background: #fce7f3;
+          color: #831843;
+          border-left-color: #f472b6;
+        }
+        .event-chip.all {
+          background: #f3e8ff;
+          color: #3b0764;
+          border-left-color: #c084fc;
+        }
+        .event-chip .chip-time {
+          font-weight: 500;
+          opacity: 0.75;
+          margin-right: 3px;
+        }
+        .event-chip.full-chip {
+          opacity: 0.6;
+          text-decoration: line-through;
+        }
+
+        /* ── Sidebar ── */
         .sidebar {
           flex: 1;
           background: white;
@@ -135,6 +192,66 @@ export class CalendarPage extends DDD {
         .chip.youth   { background: #86efac; }
         .chip.teen    { background: #7dd3fc; }
         .chip.adult   { background: #f9a8d4; }
+        .chip.all     { background: #e9d5ff; }
+
+        /* ── Upcoming list in sidebar ── */
+        .upcoming-section {
+          margin-top: 20px;
+          border-top: 2px solid #e9d5ff;
+          padding-top: 14px;
+        }
+        .upcoming-section h3 { margin-bottom: 12px; }
+        .upcoming-item {
+          margin-bottom: 12px;
+          padding: 8px 10px;
+          border-radius: 8px;
+          border-left: 4px solid;
+          font-size: 0.82rem;
+          line-height: 1.5;
+        }
+        .upcoming-item.peewee { background: #fef9c3; border-left-color: #fbbf24; color: #78350f; }
+        .upcoming-item.youth  { background: #dcfce7; border-left-color: #4ade80; color: #14532d; }
+        .upcoming-item.teen   { background: #dbeafe; border-left-color: #60a5fa; color: #1e3a8a; }
+        .upcoming-item.adult  { background: #fce7f3; border-left-color: #f472b6; color: #831843; }
+        .upcoming-item.all    { background: #f3e8ff; border-left-color: #c084fc; color: #3b0764; }
+        .upcoming-item strong { display: block; font-size: 0.85rem; margin-bottom: 2px; }
+        .full-tag {
+          display: inline-block;
+          font-size: 0.65rem;
+          font-weight: 800;
+          background: #fef2f2;
+          color: #991b1b;
+          border: 1px solid #fca5a5;
+          border-radius: 10px;
+          padding: 1px 5px;
+          margin-left: 4px;
+          vertical-align: middle;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          .calendar-container { background: #1e0a3c; border-color: #7c3aed; }
+          .day { background: #2a1050; }
+          .day.outside { background: #1a0a2e; }
+          .day-labels { background: #2d0a5e; border-bottom-color: #7c3aed; }
+          .day-label { color: #c084fc; }
+          .grid { background-color: #3b0764; }
+          .sidebar { background: #1e0a3c; border-color: #7c3aed; }
+          .sidebar h3 { color: #c084fc; border-bottom-color: #3b0764; }
+          .key-item { color: #e9d5ff; }
+          .upcoming-section { border-top-color: #3b0764; }
+        }
+
+        @media (max-width: 600px) {
+          :host { flex-direction: column; }
+          .calendar-container { flex: none; width: 100%; box-sizing: border-box; }
+          .sidebar { flex: none; width: 100%; box-sizing: border-box; }
+          .day { min-height: 64px; }
+          .day-label { font-size: 0.65rem; padding: 4px 0; }
+          .header h2 { font-size: 1rem; }
+          .date-circle { width: 20px; height: 20px; font-size: 0.65rem; top: 4px; right: 4px; }
+          .events-list { padding-right: 26px; }
+          .event-chip { font-size: 0.6rem; }
+        }
       `
     ];
   }
@@ -161,15 +278,58 @@ export class CalendarPage extends DDD {
     return new Date(this.year, this.month, 1).getDay();
   }
 
+  /** Returns events that fall on a given day number in the current month/year */
+  _eventsForDay(day) {
+    if (!this.schedule || !this.schedule.length) return [];
+    return this.schedule.filter(ev => {
+      const d = new Date(ev.date + 'T00:00:00');
+      return d.getFullYear() === this.year &&
+             d.getMonth() === this.month &&
+             d.getDate() === day;
+    });
+  }
+
+  /** Events in this month, sorted by date then time, for the sidebar list */
+  _eventsThisMonth() {
+    if (!this.schedule || !this.schedule.length) return [];
+    return this.schedule
+      .filter(ev => {
+        const d = new Date(ev.date + 'T00:00:00');
+        return d.getFullYear() === this.year && d.getMonth() === this.month;
+      })
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  }
+
+  _formatShortDate(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
   render() {
     const totalDays = this._daysInMonth();
     const startDay = this._startDay();
+    const monthEvents = this._eventsThisMonth();
+
     const cells = Array(startDay + totalDays).fill('').map((_, i) => {
       const day = i - startDay + 1;
       const valid = day > 0 && day <= totalDays;
+      const dayEvents = valid ? this._eventsForDay(day) : [];
+
       return html`
         <div class="day ${valid ? '' : 'outside'}">
-          ${valid ? html`<div class="date-circle">${day}</div>` : ''}
+          ${valid ? html`
+            <div class="events-list">
+              ${dayEvents.map(ev => html`
+                <div
+                  class="event-chip ${ev.division} ${ev.status === 'full' ? 'full-chip' : ''}"
+                  title="${ev.name} — ${ev.time} @ ${ev.location}${ev.status === 'full' ? ' (FULL)' : ''}"
+                >
+                  <span class="chip-time">${ev.time}</span>${ev.name}
+                </div>
+              `)}
+            </div>
+            <div class="date-circle">${day}</div>
+          ` : ''}
         </div>`;
     });
 
@@ -185,12 +345,30 @@ export class CalendarPage extends DDD {
         </div>
         <div class="grid">${cells}</div>
       </div>
+
       <div class="sidebar">
         <h3>Key</h3>
         <div class="key-item"><span class="chip peewee"></span> Pee-wee</div>
         <div class="key-item"><span class="chip youth"></span> Ages 7-12</div>
         <div class="key-item"><span class="chip teen"></span> Ages 13-17</div>
         <div class="key-item"><span class="chip adult"></span> Adults 18+</div>
+        <div class="key-item"><span class="chip all"></span> All Divisions</div>
+
+        ${monthEvents.length ? html`
+          <div class="upcoming-section">
+            <h3>This Month</h3>
+            ${monthEvents.map(ev => html`
+              <div class="upcoming-item ${ev.division}">
+                <strong>
+                  ${ev.name}
+                  ${ev.status === 'full' ? html`<span class="full-tag">FULL</span>` : ''}
+                </strong>
+                ${this._formatShortDate(ev.date)} · ${ev.time}<br>
+                ${ev.location}
+              </div>
+            `)}
+          </div>
+        ` : ''}
       </div>
     `;
   }

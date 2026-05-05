@@ -11,6 +11,7 @@ export class NavbarPage extends DDD {
       aboutOpen: { type: Boolean },
       joinOpen: { type: Boolean },
       contactOpen: { type: Boolean },
+      menuOpen: { type: Boolean },
     };
   }
 
@@ -19,6 +20,7 @@ export class NavbarPage extends DDD {
     this.aboutOpen = false;
     this.joinOpen = false;
     this.contactOpen = false;
+    this.menuOpen = false;
     this.navigate = () => {};
   }
 
@@ -58,7 +60,11 @@ export class NavbarPage extends DDD {
           letter-spacing: 0.5px;
           line-height: 1.2;
         }
-        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links {
+          display: flex;
+          gap: 25px;
+          align-items: center;
+        }
         .nav-links button, .dropdown-btn {
           background: none;
           border: none;
@@ -100,6 +106,68 @@ export class NavbarPage extends DDD {
           cursor: pointer;
         }
         .dropdown-content button:hover { background-color: #6a0dad; color: #f9d4f0; }
+
+        .hamburger {
+          display: none;
+          flex-direction: column;
+          gap: 5px;
+          cursor: pointer;
+          background: none;
+          border: none;
+          padding: 4px;
+        }
+        .hamburger span {
+          display: block;
+          width: 26px;
+          height: 3px;
+          background: white;
+          border-radius: 2px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          :host { background-color: #3b0764; }
+          .dropdown-content { background-color: #2d0052; }
+          .dropdown-content button { border-bottom-color: #4b0082; }
+          .dropdown-content button:hover { background-color: #4b0082; }
+        }
+
+        @media (max-width: 600px) {
+          :host { padding: var(--ddd-spacing-3) var(--ddd-spacing-4); }
+          .logo { height: 50px; }
+          .site-name { font-size: 1rem; }
+          .hamburger { display: flex; }
+          .nav-links {
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: #4b0082;
+            z-index: 200;
+            padding: 8px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          }
+          .nav-links.open { display: flex; }
+          .dropdown { width: 100%; }
+          .dropdown-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            text-align: left;
+          }
+          .dropdown-content {
+            position: static;
+            border-radius: 0;
+            margin-top: 0;
+            box-shadow: none;
+            background-color: #3b0064;
+          }
+          .dropdown-content button { padding-left: 36px; }
+        }
       `
     ];
   }
@@ -118,6 +186,7 @@ export class NavbarPage extends DDD {
 
   _go(slug) {
     this._closeAll();
+    this.menuOpen = false;
     this.navigate(slug);
   }
 
@@ -128,8 +197,12 @@ export class NavbarPage extends DDD {
           <img class="logo" src="https://easydrawingguides.com/wp-content/uploads/2021/12/how-to-draw-a-cartoon-egg-featured-image-1200.png" alt="Egg Hunt Logo">
           <span class="site-name">Daisy Towns<br>Easter Egg Hunts</span>
         </div>
-        <div class="nav-links">
 
+        <button class="hamburger" @click=${() => { this.menuOpen = !this.menuOpen; this._closeAll(); }}>
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="nav-links ${this.menuOpen ? 'open' : ''}">
           <div class="dropdown">
             <span class="dropdown-btn" @click=${() => this._toggle('about')}>About ▾</span>
             <div class="dropdown-content ${this.aboutOpen ? 'open' : ''}">
@@ -138,7 +211,6 @@ export class NavbarPage extends DDD {
               <button @click=${() => this._go('values')}>Core Values</button>
             </div>
           </div>
-
           <div class="dropdown">
             <span class="dropdown-btn" @click=${() => this._toggle('join')}>Join ▾</span>
             <div class="dropdown-content ${this.joinOpen ? 'open' : ''}">
@@ -148,7 +220,6 @@ export class NavbarPage extends DDD {
               <button @click=${() => this._go('registration/18plus')}>Adults 18+</button>
             </div>
           </div>
-
           <div class="dropdown">
             <span class="dropdown-btn" @click=${() => this._toggle('contact')}>Contact ▾</span>
             <div class="dropdown-content ${this.contactOpen ? 'open' : ''}">
@@ -157,7 +228,6 @@ export class NavbarPage extends DDD {
               <button @click=${() => this._go('socials')}>Social Media</button>
             </div>
           </div>
-
         </div>
       </nav>
     `;

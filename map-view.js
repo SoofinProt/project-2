@@ -23,7 +23,24 @@ export class MapView extends DDD {
       super.styles,
       css`
         :host { display: block; }
-        .map-placeholder { background: #e0e0e0; height: 300px; display: flex; align-items: center; justify-content: center; border-radius: var(--ddd-radius-lg); font-size: 1.2rem; color: #555; }
+        .map-placeholder {
+          background: #e0e0e0;
+          height: 300px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: var(--ddd-radius-lg);
+          font-size: 1.2rem;
+          color: #555;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          .map-placeholder { background: #2a1050; color: #c084fc; }
+        }
+
+        @media (max-width: 600px) {
+          .map-placeholder { height: 200px; font-size: 1rem; }
+        }
       `
     ];
   }

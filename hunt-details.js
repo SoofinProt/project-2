@@ -25,7 +25,17 @@ export class HuntDetails extends DDD {
       super.styles,
       css`
         :host { display: block; padding: var(--ddd-spacing-4); }
-        h3 { color: var(--ddd-theme-default-nittanyNavy); }
+        h3 { color: #6a0dad; }
+        p { color: #1a1a1a; }
+
+        @media (prefers-color-scheme: dark) {
+          h3 { color: #c084fc; }
+          p { color: #e9d5ff; }
+        }
+
+        @media (max-width: 600px) {
+          :host { padding: var(--ddd-spacing-2); }
+        }
       `
     ];
   }

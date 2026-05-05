@@ -15,15 +15,42 @@ export class Project2 extends DDD {
     return {
       ...super.properties,
       page: { type: String, reflect: true },
+      schedule: { type: Array },
+      scheduleLoading: { type: Boolean },
+      scheduleError: { type: String },
     };
   }
 
   constructor() {
     super();
     this.page = this._getPageFromSlug();
+    this.schedule = [];
+    this.scheduleLoading = true;
+    this.scheduleError = '';
     window.addEventListener('popstate', () => {
       this.page = this._getPageFromSlug();
     });
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._fetchSchedule();
+  }
+
+  async _fetchSchedule() {
+    this.scheduleLoading = true;
+    this.scheduleError = '';
+    try {
+      const res = await fetch('/api/schedule');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      this.schedule = data.schedule || [];
+    } catch (e) {
+      this.scheduleError = 'Could not load schedule. Please try again later.';
+      console.error('Schedule fetch error:', e);
+    } finally {
+      this.scheduleLoading = false;
+    }
   }
 
   _getPageFromSlug() {
@@ -54,6 +81,12 @@ export class Project2 extends DDD {
           box-sizing: border-box;
           flex: 1;
         }
+        @media (prefers-color-scheme: dark) {
+          :host { background-color: #1a0a2e; }
+        }
+        @media (max-width: 600px) {
+          .content-area { padding: var(--ddd-spacing-4); }
+        }
       `
     ];
   }
@@ -74,7 +107,9 @@ export class Project2 extends DDD {
       case 'socials':
         return html`<contact-page .section=${this.page}></contact-page>`;
       default:
-        return html`<calendar-page></calendar-page>`;
+        return html`
+          <calendar-page .schedule=${this.schedule}></calendar-page>
+        `;
     }
   }
 

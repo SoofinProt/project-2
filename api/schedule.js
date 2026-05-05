@@ -1,10 +1,8 @@
-// import { hmrPlugin, presets } from '@open-wc/dev-server-hmr';
+export default function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 's-maxage=3600');
 
-/** Use Hot Module replacement by adding --hmr to the start command */
-const hmr = process.argv.includes('--hmr');
-
-const scheduleData = {
-  schedule: [
+  const schedule = [
     {
       id: 1,
       name: "Pee-wee Scramble",
@@ -77,42 +75,7 @@ const scheduleData = {
       registered: 12,
       status: "upcoming"
     }
-  ]
-};
+  ];
 
-export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
-  open: '/',
-  watch: !hmr,
-  https: true,
-  dedupe: true,
-  /** Resolve bare module imports */
-  nodeResolve: {
-    exportConditions: ['browser', 'development'],
-  },
-
-  /** Compile JS for older browsers. Requires @web/dev-server-esbuild plugin */
-  // esbuildTarget: 'auto'
-
-  /** Set appIndex to enable SPA routing */
-  // appIndex: 'demo/index.html',
-
-  middleware: [
-    /** Intercept /api/schedule locally — mirrors the Vercel serverless function */
-    async (ctx, next) => {
-      if (ctx.path === '/api/schedule') {
-        ctx.status = 200;
-        ctx.type = 'application/json';
-        ctx.body = JSON.stringify(scheduleData);
-        return;
-      }
-      await next();
-    },
-  ],
-
-  plugins: [
-    /** Use Hot Module Replacement by uncommenting. Requires @open-wc/dev-server-hmr plugin */
-    // hmr && hmrPlugin({ exclude: ['**/*/node_modules/**/*'], presets: [presets.litElement] }),
-  ],
-
-  // See documentation for all available options
-});
+  res.status(200).json({ schedule });
+}

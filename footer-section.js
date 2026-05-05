@@ -22,6 +22,15 @@ export class FooterSection extends DDD {
           font-size: 0.9rem;
           letter-spacing: 0.5px;
         }
+
+        @media (prefers-color-scheme: dark) {
+          :host { background: #3b0764; color: #e9d5ff; }
+        }
+
+        @media (max-width: 600px) {
+          :host { padding: var(--ddd-spacing-4); }
+          p { font-size: 0.8rem; }
+        }
       `
     ];
   }
